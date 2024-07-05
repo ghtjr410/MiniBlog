@@ -1,3 +1,4 @@
+import UserBlogContainer from 'containers/UserBlogContainer/UserBlogContainer';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -9,7 +10,7 @@ const TestUserBlogPage: React.FC = () => {
   }, [nickname]);
   return (
     <div>
-      {`${nickname}'s blog`}
+      <UserBlogContainer/>
     </div>
   );
 };

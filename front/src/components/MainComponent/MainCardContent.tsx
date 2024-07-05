@@ -13,8 +13,8 @@ const MainContentText: React.FC<MainCardContentProps> = ({ content, hasImage, po
   return (
     <p className={`overflow-hidden mt-3 ${hasImage ? 'line-clamp-4' : 'line-clamp-6'} cursor-pointer`}
     onClick={() => onPostClick(postId, nickname)}
+    dangerouslySetInnerHTML={{ __html: content}}
     >
-      {content}
     </p>
   );
 };

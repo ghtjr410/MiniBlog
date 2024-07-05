@@ -8,8 +8,9 @@ type TestLabelProps = {
 
 const TestLabel = ({ text }: TestLabelProps) => {
   return (
-    <label className="block text-sm font-medium">
-      {text}
+    <label className="block text-sm font-medium"
+    dangerouslySetInnerHTML={{ __html: text }}>
+      
     </label>
   );
 };

@@ -50,4 +50,10 @@ public class PublicPostController {
         ResponseEntity<ManyPostsResponseDto> response = postService.getPostById(id);
         return response;
     }
+    @PostMapping("/by-nickname-paged") // 성공 - 닉네임으로 해당 게시글리스트 20개씩 불러오기
+    public ResponseEntity<ManyPostsResponseDto> getPagedPostsByNickname(@RequestBody Map<String, String> requestBody, @RequestParam("page") int page) {
+        String nickname = requestBody.get("nickname");
+        ResponseEntity<ManyPostsResponseDto> response = postService.getPagedPostsByNickname(nickname, page);
+        return response;
+    }
 }

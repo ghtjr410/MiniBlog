@@ -113,6 +113,22 @@ export const getAllPosts = async (page: number) => {
   }
 };
 
+
+export const getNicknameAllPosts = async (page: number) => {
+  try {
+    const response = await axios.get(GET_ALL_POSTS(), {
+      params: { page },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    return null;
+  }
+};
+
+
+
+
 export const fetchPostById = async (postId: string) => {
   const response = await axios.get(GET_POST(postId));
   return response.data;

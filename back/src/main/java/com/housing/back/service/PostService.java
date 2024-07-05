@@ -320,5 +320,21 @@ public class PostService {
                     .body(new IsOwnerResponseDto(false));
         }
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<ManyPostsResponseDto> getPagedPostsByNickname(String nickname, int page) {
+        Optional<NickNameEntity> nicknameEntityOptional = nicknameRepository.findByNickname(nickname);
+        if (!nicknameEntityOptional.isPresent()) {
+            throw new RuntimeException("닉네임을 찾을 수 없습니다.");
+        }
+
+        Pageable pageable = PageRequest.of(page, 20, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<PostEntity> postEntities = postRepository.findByNickname(nickname, pageable);
+        List<SimplePostResponseDto> responseDtoList = postEntities.stream()
+            .map(SimplePostResponseDto::fromEntity)
+            .collect(Collectors.toList());
+
+        return ManyPostsResponseDto.success(responseDtoList);
+    }
    
 }

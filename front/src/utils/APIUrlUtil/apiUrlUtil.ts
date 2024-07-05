@@ -16,3 +16,5 @@ export const AAA_URL = () => `${API_DOMAIN}/aaa/aaa`;
 export const GET_ALL_POSTS = () => `${API_DOMAIN}/public/posts`;
 export const GET_POST = (postId : string) => `${API_DOMAIN}/public/posts/${postId}`;
 export const CHECK_POST_OWNER = (postId : string) => `${API_DOMAIN}/private/posts/is-owner/${postId}`;
+export const GET_ALL_POST_BY_NICKNAME_URL = () => `${API_DOMAIN}/public/posts/by-nickname`;
+export const GET_POST_BY_NICKNAME_20_URL = () =>  `${API_DOMAIN}/public/posts/by-nickname-paged`;

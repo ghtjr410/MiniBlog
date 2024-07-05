@@ -146,7 +146,7 @@ const MainContainer: React.FC = () => {
 
   return (
     <div className="max-w-screen-2xl mx-auto">
-      <CommonHeaderSection 
+      {/* <CommonHeaderSection 
         title={"MiniBlog"}
         onHeaderClick={handleHeaderClick}
         hasNickname={hasNickname} 
@@ -195,7 +195,7 @@ const MainContainer: React.FC = () => {
         onClose={() => setLogOutModalOpen(false)}
         onConfirm={logOutModalConfirm} 
         message="로그아웃 성공" 
-      />
+      /> */}
     </div>
   );
 };

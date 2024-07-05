@@ -8,9 +8,16 @@
 
 body {
   margin: 0;
-  font-family: Pretendard;
+  font-family: WavvePADO-Regular;
 }
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@font-face {
+  font-family: "WavvePADO-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2404@1.0/WavvePADO-Regular.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
