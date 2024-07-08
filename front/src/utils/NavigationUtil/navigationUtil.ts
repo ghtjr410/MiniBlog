@@ -30,6 +30,9 @@ const useNavigateHelper = () => {
   const navigateToEditPost = () => {
     navigate('/auth/edit-post')
   };
+  const navigateToEditEditPost = (postId: string) => {
+    navigate(`/auth/edit-post/${postId}`);
+  };
   const navigateToPost = (postId: number, nickname: string) => {
     navigate(`/auth/post/${postId}/${nickname}`);
   };
@@ -38,7 +41,7 @@ const useNavigateHelper = () => {
   };
 
 
-  return { navigateToLogin, navigateToHome, navigateToSignUp, navigateToMyblog, navigateToTest, navigateToCreateNickname, navigateToUserBlog, navigateToCreatePost: navigateToEditPost, navigateToPost, navigateToDeleteAccount};
+  return { navigateToLogin, navigateToHome, navigateToSignUp, navigateToMyblog, navigateToTest, navigateToCreateNickname, navigateToUserBlog, navigateToCreatePost: navigateToEditPost, navigateToPost, navigateToDeleteAccount, navigateToEditEditPost};
 };
 
 export default useNavigateHelper;

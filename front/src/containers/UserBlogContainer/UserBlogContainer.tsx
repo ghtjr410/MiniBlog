@@ -147,7 +147,7 @@ const UserBlogContainer: React.FC = () => {
         />
 
         <div className="flex">
-          <div className="w-1/4">
+          <div className="w-1/4 ">
             <h3>게시글 목록</h3>
             <ul>
               {postList.map(post => (

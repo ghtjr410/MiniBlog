@@ -34,4 +34,8 @@ public class ResponseDto {
         ResponseDto responseDto = new ResponseDto("USER_NOT_FOUND", "User not found");
         return new ResponseEntity<>(responseDto, HttpStatus.NOT_FOUND);
     }
+    public static ResponseEntity<ResponseDto> customValidationFail(String message) {
+        ResponseDto responseDto = new ResponseDto(ResponseCode.VALIDATION_FAIL, message);
+        return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+    }
 }

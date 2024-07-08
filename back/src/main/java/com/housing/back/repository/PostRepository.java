@@ -7,7 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import com.housing.back.entity.NickNameEntity;
 import com.housing.back.entity.PostEntity;
+
+import org.springframework.transaction.annotation.Transactional;
 
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
     List<PostEntity> findByNickname(String nickname);
@@ -16,4 +20,7 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     
     @Query("SELECT p FROM PostEntity p WHERE p.nickname = :nickname")
     Page<PostEntity> findByNickname(@Param("nickname") String nickname, Pageable pageable);
+
+    @Transactional
+    void deleteByNickname(String nickname);
 }

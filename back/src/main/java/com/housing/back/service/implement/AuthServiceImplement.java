@@ -4,8 +4,10 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,7 +37,10 @@ import com.housing.back.dto.response.auth.SignInResponseDto;
 import com.housing.back.dto.response.auth.SignUpResponseDto;
 
 import com.housing.back.entity.CertificationEntity;
+import com.housing.back.entity.CommentEntity;
 import com.housing.back.entity.NickNameEntity;
+import com.housing.back.entity.PostEntity;
+import com.housing.back.entity.PostLikeEntity;
 import com.housing.back.entity.RefreshTokenEntity;
 import com.housing.back.entity.UserEntity;
 
@@ -43,7 +48,10 @@ import com.housing.back.provider.EmailProvider;
 import com.housing.back.provider.JwtProvider;
 
 import com.housing.back.repository.CertificationRepository;
+import com.housing.back.repository.CommentRepository;
 import com.housing.back.repository.NicknameRepository;
+import com.housing.back.repository.PostLikeRepository;
+import com.housing.back.repository.PostRepository;
 import com.housing.back.repository.RefreshTokenRepository;
 import com.housing.back.repository.UserRepository;
 
@@ -68,6 +76,13 @@ public class AuthServiceImplement implements AuthService {
     private final EmailProvider emailProvider;
     private final JwtBlacklistService  jwtBlacklistService;
     private final JwtUtils jwtUtils;
+    @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
+    private PostLikeRepository postLikeRepository;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -498,4 +513,35 @@ public class AuthServiceImplement implements AuthService {
 
         return ResponseEntity.ok(response);
     }
+    @Override
+    @Transactional
+public ResponseEntity<ResponseDto> deleteUserByNickname(String token, String nickname) {
+    String userId = jwtUtils.extractUserId(token.substring(7)); // "Bearer " 제거
+
+    // 사용자 ID로 닉네임 조회
+    Optional<NickNameEntity> nicknameEntityOptional = nicknameRepository.findByUserId(userId);
+    if (!nicknameEntityOptional.isPresent()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new ResponseDto("USER_NOT_FOUND", "User not found"));
+    }
+
+    // 닉네임 비교
+    if (!nicknameEntityOptional.get().getNickname().equals(nickname)) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(new ResponseDto(ResponseCode.VALIDATION_FAIL, "Validation failed: Nickname does not match with the user"));
+    }
+
+    // 사용자와 관련된 데이터 삭제
+    postLikeRepository.deleteByNickname(nickname);
+    postRepository.deleteByNickname(nickname);
+    commentRepository.deleteByNickname(nickname);
+    refreshTokenRepository.deleteByUserId(userId);
+    certificationRepository.deleteByUserId(userId);
+    nicknameRepository.deleteByUserId(userId);
+    userRepository.deleteById(userId);
+
+    // 성공 응답 반환
+    return ResponseEntity.ok(new ResponseDto());
+}
+
 }

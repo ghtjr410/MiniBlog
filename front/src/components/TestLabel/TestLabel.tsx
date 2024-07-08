@@ -4,13 +4,15 @@ import React from 'react';
 
 type TestLabelProps = {
     text: string;
+    clickable? : boolean;
   };
 
-const TestLabel = ({ text }: TestLabelProps) => {
+const TestLabel = ({ text, clickable }: TestLabelProps) => {
   return (
-    <label className="block text-sm font-medium"
-    dangerouslySetInnerHTML={{ __html: text }}>
-      
+    <label className={`block text-sm font-medium ${clickable ? 'cursor-pointer' : ''}`}
+    dangerouslySetInnerHTML={{ __html: text }}
+    
+    >
     </label>
   );
 };

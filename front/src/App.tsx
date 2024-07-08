@@ -25,6 +25,7 @@ function App() {
           <Route path="home" element={<TestMainPage />} />
           <Route path="user-blog/:nickname" element={<TestUserBlogPage />} />
           <Route path="edit-post" element={<TestEditPostPage />} />
+          <Route path="/auth/edit-post/:postId" element={<TestEditPostPage />} />
           <Route path="delete-account" element={<TestDeleteAccountPage />} />
           <Route path="post/:postId/:nickname" element={<TestPostPage />} />
           <Route path='oauth-response/:token/:expirationTime/:refreshToken/:refreshExpirationTime' element={<OAuth />} />

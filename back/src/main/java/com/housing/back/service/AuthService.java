@@ -46,4 +46,7 @@ public interface AuthService {
     ResponseEntity<ResponseDto> accessSecureArea(HttpServletRequest request);
     /////////////////////////////////////////
     ResponseEntity<?> processDeviceInfo(String accessToken, String refreshToken, String deviceInfo, HttpServletRequest request);
+
+   // Add method signature for deleting user by nickname
+   ResponseEntity<ResponseDto> deleteUserByNickname(String token, String nickname);
 }

@@ -3,7 +3,11 @@ package com.housing.back.service;
 
 import com.housing.back.common.JwtUtils;
 import com.housing.back.dto.request.comment.CommentRequestDto;
+import com.housing.back.dto.request.comment.DeleteCommentRequestDto;
+import com.housing.back.dto.request.comment.EditCommentRequestDto;
 import com.housing.back.dto.response.post.CreateCommentResponseDto;
+import com.housing.back.dto.response.post.DeleteCommentResponseDto;
+import com.housing.back.dto.response.post.EditCommentResponseDto;
 import com.housing.back.entity.CommentEntity;
 import com.housing.back.entity.NickNameEntity;
 import com.housing.back.entity.PostEntity;
@@ -66,4 +70,62 @@ public class CommentService {
 
         return CreateCommentResponseDto.success(nickname, commentRequestDto.getContent());
     }
+
+    @Transactional
+    public ResponseEntity<DeleteCommentResponseDto> deleteComment(HttpServletRequest request, DeleteCommentRequestDto deleteCommentRequestDto) {
+        String token = request.getHeader("Authorization").substring(7);
+        String userId = jwtUtils.extractUserId(token);
+
+        Optional<NickNameEntity> nicknameEntityOptional = nicknameRepository.findByUserId(userId);
+        if (!nicknameEntityOptional.isPresent()) {
+            throw new RuntimeException("닉네임을 찾을 수 없습니다.");
+        }
+
+        String nickname = nicknameEntityOptional.get().getNickname();
+
+        Optional<CommentEntity> commentEntityOptional = commentRepository.findById(deleteCommentRequestDto.getCommentId());
+        if (!commentEntityOptional.isPresent()) {
+            throw new RuntimeException("댓글을 찾을 수 없습니다.");
+        }
+
+        CommentEntity commentEntity = commentEntityOptional.get();
+
+        if (!commentEntity.getNickname().equals(nickname)) {
+            throw new RuntimeException("권한이 없습니다.");
+        }
+
+        commentRepository.delete(commentEntity);
+
+        return DeleteCommentResponseDto.success("댓글이 성공적으로 삭제되었습니다.");
+    }
+
+    @Transactional
+    public ResponseEntity<EditCommentResponseDto> editComment(HttpServletRequest request, EditCommentRequestDto editCommentRequestDto) {
+        String token = request.getHeader("Authorization").substring(7);
+        String userId = jwtUtils.extractUserId(token);
+
+        Optional<NickNameEntity> nicknameEntityOptional = nicknameRepository.findByUserId(userId);
+        if (!nicknameEntityOptional.isPresent()) {
+            throw new RuntimeException("닉네임을 찾을 수 없습니다.");
+        }
+
+        String nickname = nicknameEntityOptional.get().getNickname();
+
+        Optional<CommentEntity> commentEntityOptional = commentRepository.findById(editCommentRequestDto.getCommentId());
+        if (!commentEntityOptional.isPresent()) {
+            throw new RuntimeException("댓글을 찾을 수 없습니다.");
+        }
+
+        CommentEntity commentEntity = commentEntityOptional.get();
+
+        if (!commentEntity.getNickname().equals(nickname)) {
+            throw new RuntimeException("권한이 없습니다.");
+        }
+
+        commentEntity.setContent(editCommentRequestDto.getContent());
+        commentRepository.save(commentEntity);
+
+        return EditCommentResponseDto.success(editCommentRequestDto.getContent());
+    }
+
 }

@@ -6,7 +6,7 @@ import NicknameResponseDto from "utils/DtoUtil/response/auth/nickname.response.d
 // import { getCookie, setCookie } from "utils/CookieUtil/cookieUtis";
 import { getDeviceInfo } from "utils/DeviceInfoUtil/deviceInfoUtil";
 import { getCookie, setCookie } from "utils/CookieUtil/cookieUtis";
-import { SIGN_IN_URL, SIGN_UP_URL, ID_CHECK_URL, EMAIL_CERTIFICATION_URL, CHECK_CERTIFICATION_URL, NICKNAME_CHECK_URL, NICKNAME_CREATE_URL, NICKNAME_FIND_URL, LOGOUT_URL, REFRESH_TOKEN_URL, AAA_URL, GET_ALL_POSTS, CHECK_POST_OWNER, GET_POST } from "utils/APIUrlUtil/apiUrlUtil";
+import { SIGN_IN_URL, SIGN_UP_URL, ID_CHECK_URL, EMAIL_CERTIFICATION_URL, CHECK_CERTIFICATION_URL, NICKNAME_CHECK_URL, NICKNAME_CREATE_URL, NICKNAME_FIND_URL, LOGOUT_URL, REFRESH_TOKEN_URL, AAA_URL, GET_ALL_POSTS, CHECK_POST_OWNER, LIKE_CLICK_URL, POST_IS_LIKED_URL, DELETE_MY_POST_URL, POST_ADD_COMMENT, GET_PUBLIC_POST, GET_PRIVATE_POST, POST_DELETE_COMMENT, POST_EDIT_COMMENT, POST_INSERT_POST, POST_DELETE_ACCOUNT, PUT_UPDATE_POST } from "utils/APIUrlUtil/apiUrlUtil";
 
 const responseHandler = <T> (response: AxiosResponse<any,any>) => {
     const responseBody: T = response.data;
@@ -95,6 +95,22 @@ export const findNicknameRequest = async () => {
   });
   return result;
 };
+
+export const deleteAccount = async (nickname:string) => {
+  const result = await axios.post(POST_DELETE_ACCOUNT(), 
+  {nickname}, 
+  {
+      headers: {
+          Authorization: `Bearer ${getCookie('accessToken')}`
+      }
+  })
+  .then(response => response.data)
+  .catch(error => {
+      console.error('Error finding nickname', error);
+      return null;
+  });
+  return result;
+};
 ////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -127,10 +143,19 @@ export const getNicknameAllPosts = async (page: number) => {
 };
 
 
-
+export const fetchPostByIdWithAuth = async (postId: string) => {
+  const response = await axios.get(GET_PRIVATE_POST(postId), {
+    headers: {
+      Authorization: `Bearer ${getCookie('accessToken')}`
+    }
+  });
+  console.log('Authenticated Post Data:', response.data); // 추가된 로그
+  return response.data;
+};
 
 export const fetchPostById = async (postId: string) => {
-  const response = await axios.get(GET_POST(postId));
+  const response = await axios.get(GET_PUBLIC_POST(postId));
+  console.log('Public Post Data:', response.data); // 추가된 로그
   return response.data;
 };
 
@@ -150,12 +175,127 @@ export const checkPostOwner = async (postId: string) : Promise<boolean> => {
   }
 };
 
+export const clickPostLike = async (postId : string) =>{
+  try {
+    const response = await axios.post(LIKE_CLICK_URL(),
+    {postId} ,
+    {
+      headers: {
+        Authorization: `Bearer ${getCookie('accessToken')}`
+      }})  
+    console.log("좋아요 클릭 결과 : " + response);
+  } catch (error) {
+    console.error("좋아요 클릭 오류", error);
+  }
+  
+}
 
+export const isLiked = async (postId : string): Promise<boolean> => {
+  try{
+    const response = await axios.post(POST_IS_LIKED_URL(),
+    {postId} ,
+    {
+      headers: {
+        Authorization: `Bearer ${getCookie('accessToken')}`
+      }})
+    return response.data;
+  } catch (error) {
+    console.error('Error checking like status', error);
+    return false;
+  }
+}
 
+export const deleteMyPost = async (postId: string) => {
+  try {
+    const response = await axios.delete(DELETE_MY_POST_URL(postId), {
+      headers: {
+        Authorization: `Bearer ${getCookie('accessToken')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting post', error);
+    throw error;
+  }
+};
+export const updateMyPost = async (postId: string, title: string, content: string) => {
+  try {
+    const response = await axios.put(PUT_UPDATE_POST(postId), {
+      title,
+      content
+    }, {
+      headers: {
+        Authorization: `Bearer ${getCookie('accessToken')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting post', error);
+    throw error;
+  }
+};
 
+export const addComment = async (postId: string, content: string) => {
+  try {
+    const response = await axios.post(
+      POST_ADD_COMMENT(),
+      { postId, content },
+      {
+        headers: {
+          Authorization: `Bearer ${getCookie('accessToken')}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error adding comment', error);
+    throw error;
+  }
+};
 
+export const deleteComment = async (commentId: number) => {
+  console.log("코멘트아이디!" + commentId);
+  try{
+    const response = await axios.post(
+      POST_DELETE_COMMENT(),
+      { commentId },
+      { headers: { Authorization: `Bearer ${getCookie('accessToken')}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting comment', error);
+    throw error;
+  }
+};
 
+export const editComment = async (commentId: number, content: string) => {
+  try {
+    const response = await axios.post(
+      POST_EDIT_COMMENT(),
+      { commentId, content },
+      { headers: { Authorization: `Bearer ${getCookie('accessToken')}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error editing comment', error);
+    throw error;
+  }
+};
 
+export const insertPost = async (title: string, content: string) => {
+  try{
+    const response = await axios.post(
+      POST_INSERT_POST(),
+      { title, content},
+      { headers: { Authorization: `Bearer ${getCookie('accessToken')}`}}
+    );
+    return response.data;
+
+  } catch (error) {
+    console.error('Error inserting post', error);
+    throw error;
+  }
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////

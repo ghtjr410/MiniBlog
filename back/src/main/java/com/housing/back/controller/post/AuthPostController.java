@@ -10,6 +10,7 @@ import com.housing.back.dto.response.ResponseDto;
 import com.housing.back.dto.response.comment.CreatePostResponseDto;
 import com.housing.back.dto.response.post.IsOwnerResponseDto;
 import com.housing.back.dto.response.post.ManyPostsResponseDto;
+import com.housing.back.dto.response.post.PostDetailResponseDto;
 import com.housing.back.service.PostService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -33,6 +35,12 @@ public class AuthPostController {
     @PostMapping // 성공 - 인증된사용자 게시글 작성
     public ResponseEntity<CreatePostResponseDto> createPost(HttpServletRequest request, @RequestBody PostRequestDto postRequestDto) {
         ResponseEntity<CreatePostResponseDto> response = postService.createPost(request, postRequestDto);
+        return response;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDetailResponseDto> getPostById(@PathVariable("id") Long id, HttpServletRequest request) {
+        ResponseEntity<PostDetailResponseDto> response = postService.getPostById(id, request);
         return response;
     }
 

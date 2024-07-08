@@ -1,9 +1,10 @@
+import EditPostContainer from 'containers/EditPostContainer/EditPostContainer';
 import React from 'react';
 
 const TestEditPostPage: React.FC = () => {
   return (
     <div>
-      TestEditPostPage
+      <EditPostContainer/>
     </div>
   );
 };

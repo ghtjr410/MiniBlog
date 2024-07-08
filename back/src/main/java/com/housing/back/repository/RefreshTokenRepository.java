@@ -21,4 +21,9 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity
     @Transactional
     @Query("DELETE FROM RefreshTokenEntity r WHERE r.userId = :userId AND r.deviceInfo = :deviceInfo AND r.ipAddress = :ipAddress AND r.expirationDate < :expirationDate")
     int deleteExpiredTokens(@Param("userId") String userId, @Param("deviceInfo") String deviceInfo, @Param("ipAddress") String ipAddress, @Param("expirationDate") Date expirationDate);
+
+    /////////////////////
+    @Modifying
+    @Transactional
+    void deleteByUserId(String userId);
 }

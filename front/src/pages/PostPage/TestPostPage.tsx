@@ -1,5 +1,5 @@
 // import PostContainer from 'containers/PostContainer/PostContainer';
-import TestPostContainer from 'containers/PostContainer/TestPostContainer';
+import TestPostContainer from 'containers/PostContainer/PostContainer';
 import React from 'react';
 
 

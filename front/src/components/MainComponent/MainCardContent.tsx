@@ -9,7 +9,7 @@ type MainCardContentProps = {
   onPostClick: (postId: number, nickname: string) => void;
 };
 
-const MainContentText: React.FC<MainCardContentProps> = ({ content, hasImage, postId, nickname, onPostClick }) => {
+const MainContentContent: React.FC<MainCardContentProps> = ({ content, hasImage, postId, nickname, onPostClick }) => {
   return (
     <p className={`overflow-hidden mt-3 ${hasImage ? 'line-clamp-4' : 'line-clamp-6'} cursor-pointer`}
     onClick={() => onPostClick(postId, nickname)}
@@ -19,4 +19,4 @@ const MainContentText: React.FC<MainCardContentProps> = ({ content, hasImage, po
   );
 };
 
-export default MainContentText;
+export default MainContentContent;

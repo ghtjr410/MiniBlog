@@ -18,6 +18,7 @@ import com.housing.back.dto.response.comment.CreatePostResponseDto;
 import com.housing.back.dto.response.post.CreateCommentResponseDto;
 import com.housing.back.dto.response.post.IsOwnerResponseDto;
 import com.housing.back.dto.response.post.ManyPostsResponseDto;
+import com.housing.back.dto.response.post.PostDetailResponseDto;
 import com.housing.back.dto.response.post.SimplePostResponseDto;
 
 import com.housing.back.entity.CommentEntity;
@@ -143,36 +144,36 @@ public class PostService {
         postRepository.save(postEntity);
     }
 
-    @Transactional
-    public ResponseEntity<CreateCommentResponseDto> createComment(HttpServletRequest request, CommentRequestDto commentRequestDto) {
-        String token = request.getHeader("Authorization").substring(7);
-        String userId = jwtUtils.extractUserId(token);
+    // @Transactional
+    // public ResponseEntity<CreateCommentResponseDto> createComment(HttpServletRequest request, CommentRequestDto commentRequestDto) {
+    //     String token = request.getHeader("Authorization").substring(7);
+    //     String userId = jwtUtils.extractUserId(token);
 
-        // 닉네임 변환
-        Optional<NickNameEntity> nicknameEntityOptional = nicknameRepository.findByUserId(userId);
-        if (!nicknameEntityOptional.isPresent()) {
-            throw new RuntimeException("닉네임을 찾을 수 없습니다.");
-        }
+    //     // 닉네임 변환
+    //     Optional<NickNameEntity> nicknameEntityOptional = nicknameRepository.findByUserId(userId);
+    //     if (!nicknameEntityOptional.isPresent()) {
+    //         throw new RuntimeException("닉네임을 찾을 수 없습니다.");
+    //     }
 
-        String nickname = nicknameEntityOptional.get().getNickname();
+    //     String nickname = nicknameEntityOptional.get().getNickname();
 
-        // 포스트 찾기
-        Optional<PostEntity> postEntityOptional = postRepository.findById(commentRequestDto.getPostId());
-        if (!postEntityOptional.isPresent()) {
-            throw new RuntimeException("포스트를 찾을 수 없습니다.");
-        }
+    //     // 포스트 찾기
+    //     Optional<PostEntity> postEntityOptional = postRepository.findById(commentRequestDto.getPostId());
+    //     if (!postEntityOptional.isPresent()) {
+    //         throw new RuntimeException("포스트를 찾을 수 없습니다.");
+    //     }
 
-        PostEntity postEntity = postEntityOptional.get();
+    //     PostEntity postEntity = postEntityOptional.get();
 
-        // 댓글 생성
-        CommentEntity comment = new CommentEntity();
-        comment.setNickname(nickname);
-        comment.setContent(commentRequestDto.getContent());
-        comment.setPost(postEntity);
-        commentRepository.save(comment);
+    //     // 댓글 생성
+    //     CommentEntity comment = new CommentEntity();
+    //     comment.setNickname(nickname);
+    //     comment.setContent(commentRequestDto.getContent());
+    //     comment.setPost(postEntity);
+    //     commentRepository.save(comment);
 
-        return CreateCommentResponseDto.success(nickname, commentRequestDto.getContent());
-    }
+    //     return CreateCommentResponseDto.success(nickname, commentRequestDto.getContent());
+    // }
 
     @Transactional(readOnly = true)
     public ResponseEntity<ManyPostsResponseDto> getMyPosts(HttpServletRequest request) {
@@ -221,12 +222,33 @@ public class PostService {
         return ManyPostsResponseDto.success(responseDtoList);
     }   
 
+    // @Transactional(readOnly = true)
+    // public ResponseEntity<ManyPostsResponseDto> getPostById(Long id) {
+    //     PostEntity postEntity = postRepository.findById(id)
+    //         .orElseThrow(() -> new RuntimeException("Post not found"));
+    //     SimplePostResponseDto response = SimplePostResponseDto.fromEntity(postEntity);
+    //     return ManyPostsResponseDto.success(response);
+    // }
+
     @Transactional(readOnly = true)
-    public ResponseEntity<ManyPostsResponseDto> getPostById(Long id) {
+    public ResponseEntity<PostDetailResponseDto> getPostById(Long id, HttpServletRequest request) {
         PostEntity postEntity = postRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Post not found"));
-        SimplePostResponseDto response = SimplePostResponseDto.fromEntity(postEntity);
-        return ManyPostsResponseDto.success(response);
+
+        String userNickname = null;
+        String token = request != null ? request.getHeader("Authorization") : null;
+        if (token != null && token.startsWith("Bearer ")) {
+            String extractedToken = token.substring(7);
+            String userId = jwtUtils.extractUserId(extractedToken);
+            Optional<NickNameEntity> nicknameEntityOptional = nicknameRepository.findByUserId(userId);
+            if (!nicknameEntityOptional.isPresent()) {
+                throw new RuntimeException("닉네임을 찾을 수 없습니다.");
+            }
+            userNickname = nicknameEntityOptional.get().getNickname();
+        }
+
+        PostDetailResponseDto response = PostDetailResponseDto.fromEntity(postEntity, userNickname);
+        return ResponseEntity.ok(response);
     }
 
     @Transactional

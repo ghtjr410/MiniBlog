@@ -88,4 +88,15 @@ public class UserController {
             ResponseEntity<?> response = authService.processDeviceInfo(accessToken, refreshToken, deviceInfo, request);
         return response;
     }
+
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> requestBody) {
+        String nickname = requestBody.get("nickname");
+        if (nickname == null) {
+            return ResponseEntity.badRequest().body(new ResponseDto("FAIL", "닉네임이 누락되었습니다."));
+        }   
+        authService.deleteUserByNickname(token, nickname);
+
+        return ResponseEntity.ok().build();
+    }
 }

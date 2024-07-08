@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.housing.back.dto.response.post.ManyPostsResponseDto;
+import com.housing.back.dto.response.post.PostDetailResponseDto;
 import com.housing.back.service.PostService;
 
 
@@ -45,11 +46,17 @@ public class PublicPostController {
         return response;
     }
 
-    @GetMapping("/{id}") // 성공 - postId로 클릭한 게시글 불러오기
-    public ResponseEntity<ManyPostsResponseDto> getPostById(@PathVariable("id") Long id) {
-        ResponseEntity<ManyPostsResponseDto> response = postService.getPostById(id);
+    // @GetMapping("/{id}") // 성공 - postId로 클릭한 게시글 불러오기
+    // public ResponseEntity<ManyPostsResponseDto> getPostById(@PathVariable("id") Long id) {
+    //     ResponseEntity<ManyPostsResponseDto> response = postService.getPostById(id);
+    //     return response;
+    // }
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDetailResponseDto> getPostById(@PathVariable("id") Long id) {
+        ResponseEntity<PostDetailResponseDto> response = postService.getPostById(id, null);
         return response;
     }
+
     @PostMapping("/by-nickname-paged") // 성공 - 닉네임으로 해당 게시글리스트 20개씩 불러오기
     public ResponseEntity<ManyPostsResponseDto> getPagedPostsByNickname(@RequestBody Map<String, String> requestBody, @RequestParam("page") int page) {
         String nickname = requestBody.get("nickname");
