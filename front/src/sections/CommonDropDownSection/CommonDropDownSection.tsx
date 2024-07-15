@@ -17,7 +17,7 @@ const CommonDropDownSection: React.FC<CommonDropDownSectionProps> = ({
   return (
     <div className="relative">
       <div className="absolute right-0  w-48 bg-[#444444] border rounded shadow-lg z-10">
-        <ul>
+        <ul className="flex flex-col items-center">
           <li>
             <CommonButton text="내 블로그" onClick={onMyPageClick} className="text-white" />
           </li>

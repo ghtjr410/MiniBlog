@@ -9,6 +9,9 @@ module.exports = {
       boxShadow: {
         custom: "9px 13px 16px -4px rgba(0,0,0,0.4)",
       },
+      colors: {
+        customColor: '#FBF7F0', // 사용자 정의 색상 추가
+      },
     },
   },
   variants: {

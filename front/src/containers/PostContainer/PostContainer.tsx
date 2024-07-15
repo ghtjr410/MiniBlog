@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Modal from 'components/Modal/Modal';
 import CommonHeaderSection from 'sections/CommonHeaderSection/CommonHeaderSection';
 import CommonDropDownSection from 'sections/CommonDropDownSection/CommonDropDownSection';
@@ -22,7 +22,6 @@ const TestPostContainer: React.FC = () => {
   const { navigateToCreateNickname, navigateToLogin, navigateToUserBlog, navigateToCreatePost, navigateToHome, navigateToEditEditPost } = useNavigateHelper();
   const { dropdownOpen, toggleDropdown } = useHeader();
   const [logOutModalOpen, setLogOutModalOpen] = useState(false);
-  const [isLoginUser, setIsLoginUser] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [blogNickname, setBlogNickname] = useState<string>('');
   const [thisPostId, setThisPostId] = useState<string>('');
@@ -33,12 +32,13 @@ const TestPostContainer: React.FC = () => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loginRequiredModalOpen, setLoginRequiredModalOpen] = useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [commentAddModalOpen, setCommentAddModalOpen] = useState<boolean>(false); // 댓글 작성 모달 상태 추가
   const [commentDeleteModalOpen, setCommentDeleteModalOpen] = useState<boolean>(false); // 댓글 삭제 모달 상태 추가
   const [commentEditModalOpen, setCommentEditModalOpen] = useState<boolean>(false); // 댓글 수정 모달 상태 추가
+
   const { postId, nickname } = useParams<{ postId: string; nickname: string }>();
 
   const { hasNickname, myNickname, nicknameModalOpen, setNicknameModalOpen } = useAuth();
-  const navigate = useNavigate();
 
   const handleCheckPostOwner = async (postId: string) => {
     if (postId) {
@@ -57,6 +57,7 @@ const TestPostContainer: React.FC = () => {
       let data;
       if (hasNickname) {
         data = await fetchPostByIdWithAuth(postId);
+        
       } else {
         data = await fetchPostById(postId);
       }
@@ -69,6 +70,7 @@ const TestPostContainer: React.FC = () => {
 
         if (hasNickname) {
           const likeStatus = await isLiked(postId);
+          console.log("좋아요 상태 말해봐" + likeStatus)
           setHasLiked(likeStatus);
         }
       } else {
@@ -82,18 +84,28 @@ const TestPostContainer: React.FC = () => {
 
   useEffect(() => {
     console.log("게시글 ID:", postId, "닉네임:", nickname);
-    if (nickname) setBlogNickname(nickname);
+    if (nickname) setBlogNickname(nickname); // 닉네임
     if (postId) {
       setThisPostId(postId);
       fetchPostData(postId);
     }
-  }, [postId, nickname]);
+  }, [postId, nickname,hasLiked]);
 
   useEffect(() => {
     if (thisPostId) {
       handleCheckPostOwner(thisPostId);
     }
   }, [thisPostId, refresh]);
+  useEffect(() => {
+    // 초기 렌더링 시에 hasLiked 상태 설정
+    if (thisPostId && hasNickname) {
+      (async () => {
+        const likeStatus = await isLiked(thisPostId);
+        console.log("Initial like status:", likeStatus);
+        setHasLiked(likeStatus);
+      })();
+    }
+  }, [thisPostId, hasNickname]);
 
   const nicknameModalConfirm = () => {
     navigateToCreateNickname();
@@ -125,6 +137,9 @@ const TestPostContainer: React.FC = () => {
 
     try {
       await clickPostLike(thisPostId);
+      const likeStatus = await isLiked(thisPostId); // 변경된 부분
+      console.log("Like status after click:", likeStatus); // 변경된 부분
+      setHasLiked(likeStatus); // 변경된 부분
       fetchPostData(thisPostId);
     } catch (error) {
       console.error('Error liking post:', error);
@@ -157,6 +172,7 @@ const TestPostContainer: React.FC = () => {
     }
     try {
       await addComment(thisPostId, content);
+      setCommentAddModalOpen(true)
       fetchPostData(thisPostId);
     } catch (error) {
       console.error('Error adding comment:', error);
@@ -187,7 +203,7 @@ const TestPostContainer: React.FC = () => {
 
   return (
     <HeaderProvider>
-      <div className="max-w-screen-2xl mx-auto">
+      <div className="max-w-screen-2xl mx-auto bg-[#FBF7F0]">
         <CommonHeaderSection
           title={`${blogNickname || ''}'s blog`}
           onHeaderClick={handleHeaderClick}
@@ -211,6 +227,7 @@ const TestPostContainer: React.FC = () => {
             nickname={postContent.nickname || ''} 
             date={postContent.createdAt || ''} 
             content={postContent.content || ''} 
+            viewCount={postContent.viewCount}
             likeCount={likeCount} 
             isOwner={isOwner}
             onLikeClick={handleLikeClick}
@@ -228,7 +245,7 @@ const TestPostContainer: React.FC = () => {
         ) : (
           <div>Loading...</div>
         )}
-
+        
         <Modal
           isOpen={nicknameModalOpen}
           onClose={() => setNicknameModalOpen(false)}
@@ -252,6 +269,12 @@ const TestPostContainer: React.FC = () => {
           onClose={() => setDeleteModalOpen(false)}
           onConfirm={deleteModalConfirm}
           message="게시물이 삭제되었습니다."
+        />
+        <Modal
+          isOpen={commentAddModalOpen}
+          onClose={() => setCommentAddModalOpen(false)}
+          onConfirm={() => setCommentAddModalOpen(false)}
+          message="댓글이 성공적으로 작성되었습니다."
         />
         <Modal
           isOpen={commentDeleteModalOpen}

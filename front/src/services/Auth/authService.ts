@@ -6,7 +6,7 @@ import NicknameResponseDto from "utils/DtoUtil/response/auth/nickname.response.d
 // import { getCookie, setCookie } from "utils/CookieUtil/cookieUtis";
 import { getDeviceInfo } from "utils/DeviceInfoUtil/deviceInfoUtil";
 import { getCookie, setCookie } from "utils/CookieUtil/cookieUtis";
-import { SIGN_IN_URL, SIGN_UP_URL, ID_CHECK_URL, EMAIL_CERTIFICATION_URL, CHECK_CERTIFICATION_URL, NICKNAME_CHECK_URL, NICKNAME_CREATE_URL, NICKNAME_FIND_URL, LOGOUT_URL, REFRESH_TOKEN_URL, AAA_URL, GET_ALL_POSTS, CHECK_POST_OWNER, LIKE_CLICK_URL, POST_IS_LIKED_URL, DELETE_MY_POST_URL, POST_ADD_COMMENT, GET_PUBLIC_POST, GET_PRIVATE_POST, POST_DELETE_COMMENT, POST_EDIT_COMMENT, POST_INSERT_POST, POST_DELETE_ACCOUNT, PUT_UPDATE_POST } from "utils/APIUrlUtil/apiUrlUtil";
+import { SIGN_IN_URL, SIGN_UP_URL, ID_CHECK_URL, EMAIL_CERTIFICATION_URL, CHECK_CERTIFICATION_URL, NICKNAME_CHECK_URL, NICKNAME_CREATE_URL, NICKNAME_FIND_URL, LOGOUT_URL, REFRESH_TOKEN_URL, AAA_URL, GET_ALL_POSTS, CHECK_POST_OWNER, LIKE_CLICK_URL, POST_IS_LIKED_URL, DELETE_MY_POST_URL, POST_ADD_COMMENT, GET_PUBLIC_POST, GET_PRIVATE_POST, POST_DELETE_COMMENT, POST_EDIT_COMMENT, POST_INSERT_POST, POST_DELETE_ACCOUNT, PUT_UPDATE_POST, INCREMENT_VIEW } from "utils/APIUrlUtil/apiUrlUtil";
 
 const responseHandler = <T> (response: AxiosResponse<any,any>) => {
     const responseBody: T = response.data;
@@ -114,7 +114,15 @@ export const deleteAccount = async (nickname:string) => {
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-
+export const incrementView = async (postId: number) => {
+  try{
+    const response = await axios.post(INCREMENT_VIEW(postId))
+    return response;
+  } catch (error) {
+    console.error('Error IncremnetView: ', error);
+    return null;
+  }
+}
 
 
 export const getAllPosts = async (page: number) => {

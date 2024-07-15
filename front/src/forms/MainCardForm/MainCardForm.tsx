@@ -31,7 +31,7 @@ const MainCardForm: React.FC<MainCardFormProps> = ({
   onNicknameClick,
 }) => {
   return (
-    <div className=" mb-4 border rounded shadow-2xl hover:shadow-custom hover:scale-105 font-custom max-w-xs h-110 flex flex-col justify-between">
+    <div className=" mb-4 border rounded shadow-2xl hover:shadow-custom hover:scale-105 font-custom max-w-xs h-110 flex flex-col justify-between bg-white">
       {imageUrl && <MainCardImage url={imageUrl} postId={postId} nickname={nickname} onPostClick={onPostClick} />}
       <div className={`flex-1 ${!imageUrl ? 'h-full' : ''} flex flex-col `}>
         <MainCardBodySection title={title} content={content} hasImage={!!imageUrl} postId={postId} nickname={nickname} onPostClick={onPostClick} />      

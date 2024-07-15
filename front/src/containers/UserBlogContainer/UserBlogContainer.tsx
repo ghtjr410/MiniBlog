@@ -10,9 +10,14 @@ import { HeaderProvider, useHeader } from 'services/HeaderService/HeaderService'
 import { useAuth } from 'hooks/useAuthHook';
 import { GET_ALL_POST_BY_NICKNAME_URL, GET_POST_BY_NICKNAME_20_URL } from 'utils/APIUrlUtil/apiUrlUtil';
 import axios from 'axios';
+import SidebarTitle from 'components/UserBlogComponent/SiderbarTitle/SidebarTitle';
+import SidebarList from 'components/UserBlogComponent/SidebarList/SidebarList';
+import CardListTitle from 'components/UserBlogComponent/CardListTitle/CardListTitle';
+import UserBlogCardForm from 'forms/UserBlogCardForm/UserBlogCardForm';
+import { incrementView } from 'services/Auth/authService';
 
 const UserBlogContainer: React.FC = () => {
-  const { navigateToCreateNickname, navigateToLogin, navigateToUserBlog, navigateToCreatePost, navigateToHome } = useNavigateHelper();  // 네비게이션 헬퍼 함수들
+  const { navigateToCreateNickname, navigateToLogin, navigateToUserBlog, navigateToCreatePost, navigateToHome,  navigateToPost } = useNavigateHelper();  // 네비게이션 헬퍼 함수들
   const { dropdownOpen, toggleDropdown } = useHeader(); // 헤더 드롭다운 상태 및 토글 함수
   const [logOutModalOpen, setLogOutModalOpen] = useState(false); // 로그아웃 모달 상태
   const [refresh, setRefresh] = useState(false); // 데이터 새로고침 상태
@@ -102,6 +107,7 @@ const UserBlogContainer: React.FC = () => {
 
   // 로그아웃 모달 확인 버튼 클릭 시 호출되는 함수
   const logOutModalConfirm = () => {
+    toggleDropdown();
     setRefresh(prev => !prev); // 새로고침 상태 변경
     navigateToHome();
   };
@@ -112,6 +118,13 @@ const UserBlogContainer: React.FC = () => {
       navigateToUserBlog(blogNickname);
     }
   };
+  // 게시글 제목 클릭 시 호출되는 함수
+  const handlePostClick = async(postId: number) => {
+    console.log(`Post ID: ${postId}, Nickname: ${blogNickname}`);
+    await incrementView(postId);  
+    navigateToPost(postId, blogNickname);
+  };
+
 
   return (
     <HeaderProvider>
@@ -146,26 +159,29 @@ const UserBlogContainer: React.FC = () => {
           message="로그아웃 성공"
         />
 
-        <div className="flex">
-          <div className="w-1/4 ">
-            <h3>게시글 목록</h3>
-            <ul>
-              {postList.map(post => (
-                <li key={post.postId}>{post.title}</li>
-              ))}
-            </ul>
+        <div className='flex justify-between bg-[#FBF7F0]'>
+          <div className='w-80 p-4'>
+            <SidebarTitle text = "게시글 목록"/>
+            {postList.map((post) => (
+              <SidebarList key={post.postId} title={post.title} onClick={() => handlePostClick(post.postId)}/>
+            ))}
           </div>
           <div className="w-3/4">
-          <h3>게시글 카드 목록</h3>
-            <div>
-              {postCardList.map(post => (
-                <div key={post.postId} className="border rounded shadow p-4 mb-4">
-                <h4 className="font-bold mb-2">{post.title}</h4>
-                <p>{post.content}</p>
-              </div>
-              ))}
-            </div>
+          <CardListTitle listTitle="게시글 카드 목록" />
+          <div>
+            {postCardList.map((post)=> (
+              <UserBlogCardForm
+                key={post.postId}
+                title={post.title}
+                content={post.content.replace(/(<([^>]+)>)/gi, '')}
+                createdAt={post.createdAt}
+                commentCount={post.comments.length}
+                likeCount={post.likeCount}
+                onClick={() => handlePostClick(post.postId)}
+              />
+            ))}
           </div>
+        </div>
         </div>
       </div>
     </HeaderProvider>

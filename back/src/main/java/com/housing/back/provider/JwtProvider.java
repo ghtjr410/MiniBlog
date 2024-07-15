@@ -23,14 +23,14 @@ public class JwtProvider {
     private JwtUtils jwtUtils;
 
     public JwtResponseDto createAccessToken(String userId) {
-        // Date expiredDate = Date.from(Instant.now().plus(5, ChronoUnit.MINUTES)); // 본래 사용할 엑세스토큰 만료기간
-        Date expiredDate = Date.from(Instant.now().plus(7, ChronoUnit.DAYS)); // 팀원 편의상 엑세스토큰 기간 늘림
+        Date expiredDate = Date.from(Instant.now().plus(5, ChronoUnit.MINUTES)); // 본래 사용할 엑세스토큰 만료기간
+        // Date expiredDate = Date.from(Instant.now().plus(7, ChronoUnit.DAYS)); // 팀원 편의상 엑세스토큰 기간 늘림
         String token = securityService.generateToken(userId, expiredDate);
         return new JwtResponseDto(token, expiredDate);
     }
 
     public JwtResponseDto createRefreshToken(String userId) {
-        Date expiredDate = Date.from(Instant.now().plus(7, ChronoUnit.DAYS));
+        Date expiredDate = Date.from(Instant.now().plus(365, ChronoUnit.DAYS));
         String token = securityService.generateToken(userId, expiredDate);
         return new JwtResponseDto(token, expiredDate);
     }

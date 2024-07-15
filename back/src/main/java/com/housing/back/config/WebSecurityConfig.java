@@ -68,12 +68,12 @@ public class WebSecurityConfig {
             System.out.println("Security configuration completed.");
 
         return httpSecurity.build();
-
     }
 
     @Bean
     protected CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
+        // 나중에 클라이언트 배포하는 주소를 적으면됌
         corsConfiguration.addAllowedOrigin("http://localhost:3000"); // 클라이언트 도메인 명시
         // corsConfiguration.addAllowedOrigin("*"); // 모든 출처 허용
         corsConfiguration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용

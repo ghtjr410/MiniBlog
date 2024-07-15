@@ -8,7 +8,7 @@ import CommonHeaderSection from 'sections/CommonHeaderSection/CommonHeaderSectio
 import CommonDropDownSection from 'sections/CommonDropDownSection/CommonDropDownSection';
 import { combinedLogoutHandler } from 'services/LogOutService/logOutService';
 import useNavigateHelper from 'utils/NavigationUtil/navigationUtil';
-import { deleteAccount, getAllPosts } from 'services/Auth/authService';
+import { deleteAccount, getAllPosts, incrementView } from 'services/Auth/authService';
 import MainCardForm from 'forms/MainCardForm/MainCardForm';
 import { HeaderProvider, useHeader } from 'services/HeaderService/HeaderService';
 import { useAuth } from 'hooks/useAuthHook';
@@ -104,9 +104,15 @@ const TestMainContainer: React.FC = () => {
     return imgTagMatch ? imgTagMatch[1] : '';
   };
 
-  const handlePostClick = (postId: number, nickname: string) => {
-    console.log(`게시글 ID : ${postId} / 유저 닉네임 : ${nickname}`);
-    navigateToPost(postId, nickname);
+  const handlePostClick = async(postId: number, nickname: string) => {
+    try {
+      console.log(`게시글 ID : ${postId} / 유저 닉네임 : ${nickname}`);
+      await incrementView(postId);  
+      navigateToPost(postId, nickname);
+    } catch (error) {
+      console.error(error);      
+    }
+
   };
 
   const handleNicknameClick = (nickname: string) => {
@@ -130,7 +136,7 @@ const TestMainContainer: React.FC = () => {
 
   return (
     <HeaderProvider>
-      <div className="max-w-screen-2xl mx-auto">
+      <div className="max-w-screen-2xl mx-auto bg-[#FBF7F0]">
         <CommonHeaderSection
           title={"MiniBlog"}
           hasNickname={hasNickname}

@@ -61,8 +61,8 @@ const LoginForm: React.FC = () => {
         errorText={passwordError}
       />
       <div className="flex justify-between items-center mt-4">
-        <SaveUsernameSection />
-        <UserInfoLinksSection />
+        {/* <SaveUsernameSection />
+        <UserInfoLinksSection /> */}
       </div>
       <AuthButton text="로그인" onClick={handleLogin} className="mt-4" />
       <div className="my-2"></div>

@@ -36,7 +36,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onConfirm, message, show
         <div className="flex justify-end mt-4">
           <button 
             onClick={handleConfirm} 
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-[#CDC9C3] text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             확인
           </button>

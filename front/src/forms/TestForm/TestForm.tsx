@@ -17,6 +17,7 @@ type TestFormProps = {
   nickname: string;
   date: string;
   content: string;
+  viewCount: string;
   likeCount: string;
   isOwner: boolean;
   onLikeClick: () => void;
@@ -37,6 +38,7 @@ const TestForm: React.FC<TestFormProps> = ({
   nickname,
   date,
   content,
+  viewCount,
   likeCount,
   isOwner,
   onLikeClick,
@@ -52,11 +54,12 @@ const TestForm: React.FC<TestFormProps> = ({
   myNickname
 }) => {
   return (
-    <div className="max-w-2xl mx-auto bg-gray-100 p-8 rounded-lg flex flex-col gap-4">
+    <div className="max-w-[80%] mx-auto p-8 flex flex-col gap-4">
       <TestTitleSection text={title} />
       <TestUserInfoSection 
         nickname={nickname} 
         date={date} 
+        viewCount={viewCount}
         likeCount={likeCount} 
         isOwner={isOwner} 
         onLikeClick={onLikeClick}

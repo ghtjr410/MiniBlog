@@ -31,4 +31,5 @@ export const POST_ADD_COMMENT = () => `${API_DOMAIN}/private/comments`;
 export const POST_DELETE_COMMENT = () => `${API_DOMAIN}/private/comments/delete`;
 export const POST_EDIT_COMMENT = () => `${API_DOMAIN}/private/comments/edit`;
 export const POST_INSERT_POST = () => `${API_DOMAIN}/private/posts`;
-export const PUT_UPDATE_POST = (postId: string) =>  `${API_DOMAIN}/private/posts/${postId}`;
+export const PUT_UPDATE_POST = (postId: string) => `${API_DOMAIN}/private/posts/${postId}`;
+export const INCREMENT_VIEW = (postId: number) => `${API_DOMAIN}/public/posts/increment-view/${postId}`;

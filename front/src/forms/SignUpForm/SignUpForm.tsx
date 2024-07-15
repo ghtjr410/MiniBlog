@@ -10,6 +10,7 @@ import { onCertificationNumberKeyDownHandler, onCertificationNumberButtonClickHa
 import { onSignUpButtonClickHandler } from 'services/SignUpService/signUpService'; // Import the signUp service
 import useNavigateHelper from 'utils/NavigationUtil/navigationUtil';
 import HomeButton from 'components/HomeButton/HomeButton';
+import Modal from 'components/Modal/Modal';
 
 const SignUpForm: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -27,6 +28,7 @@ const SignUpForm: React.FC = () => {
   const [certificationNumberMessage, setCertificationNumberMessage] = useState('');
   const [certificationNumberError, setCertificationNumberError] = useState(false);
   const [certificationCheck, setCertificationCheck] = useState(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
 
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
@@ -41,6 +43,9 @@ const SignUpForm: React.FC = () => {
   const passwordCheckErrorType = password !== confirmPassword ? 'error' : 'success';
   const emailErrorType = emailError ? 'error' : 'success';
   const certificationNumberErrorType = certificationNumberError ? 'error' : 'success';
+  const handleSignUpSuccess = () => {
+    setSuccessModalOpen(true);
+  };
 
   return (
     <div className="bg-white p-6 rounded shadow-md w-96">
@@ -132,12 +137,24 @@ const SignUpForm: React.FC = () => {
           setCertificationNumberMessage,
           setCertificationNumberError,
           setCertificationCheck,
-          navigateToLogin
+          handleSignUpSuccess
       )} className="mt-4" />
       <div className="my-2"></div>
       <AuthButton text="로그인" onClick={() => navigateToLogin()} variant="secondary" />
       <AuthDivider />
       <SNSLoginSection />
+      <Modal
+        isOpen={successModalOpen}
+        onClose={() => {
+          setSuccessModalOpen(false);
+          navigateToLogin();
+        }}
+        onConfirm={() => {
+          setSuccessModalOpen(false);
+          navigateToLogin();
+        }}
+        message="회원가입에 성공하였습니다."
+      />
     </div>
   );
 };

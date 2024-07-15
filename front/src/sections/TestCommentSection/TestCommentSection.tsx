@@ -58,27 +58,29 @@ const TestCommentSection: React.FC<TestCommentSectionProps> = ({
   };
 
   return (
-    <div className="w-full p-4 rounded-md bg-white shadow-md">
-      <div className="mb-4">
-        <textarea
-          className="w-full p-2 border rounded-md resize-none"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="댓글을 입력하세요..."
-          rows={1}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleAddComment();
-            }
+    <div className="w-full flex flex-col p-4 rounded-md bg-white shadow-md">
+      <div className="w-full relative flex items-center border rounded-md">
+        <div className="w-[92%] flex">
+          <textarea
+            className="flex-1 w-full p-2 resize-none min-h-[5rem] h-[3rem] max-h-[3rem] overflow-y-auto outline-none"
+            value={newComment}
+           onChange={(e) => setNewComment(e.target.value)}
+            placeholder="댓글을 입력하세요..."
+            rows={1}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleAddComment();
+              }
+            }}
+            onInput={(e) => {
+              e.currentTarget.style.height = 'auto';
+              e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
           }}
-          onInput={(e) => {
-            e.currentTarget.style.height = 'auto';
-            e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
-          }}
-        />
+            />
+        </div>
         <button
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
+          className="absolute top-0 right-0 py-7 px-3"
           onClick={isUserLoggedIn ? handleAddComment : onLoginRequest}
         >
           댓글 추가
@@ -86,42 +88,46 @@ const TestCommentSection: React.FC<TestCommentSectionProps> = ({
       </div>
       <div>
         {comments.map((comment) => (
-          <div key={comment.commentId} className="p-2 border-b last:border-none">
+          <div key={comment.commentId} className="py-2 border-b last:border-none">
             {editCommentId === comment.commentId ? (
-              <div>
+              <div className="relative flex w-full border rounded-md">
                 <textarea
-                  className="w-full p-2 border rounded-md resize-none"
+                  className="w-[93%] p-2 resize-none outline-none"
                   value={editCommentContent}
                   onChange={(e) => setEditCommentContent(e.target.value)}
                 />
-                <button
-                  className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md"
-                  onClick={handleUpdateComment}
-                >
-                  댓글 수정
-                </button>
-                <button
-                  className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
-                  onClick={handleCancelEdit}
-                >
-                  취소
-                </button>
+                <div className="flex flex-col">
+                  <button
+                    className="px-4 py-2 border-b"
+                    onClick={handleUpdateComment}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="px-5 py-2"
+                    onClick={handleCancelEdit}
+                  >
+                    취소
+                  </button>
+                </div>
               </div>
             ) : (
-              <div>
-                <TestLabel text={comment.nickname} />
-                <p className="whitespace-pre-wrap">{comment.content}</p>
-                <span className="text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</span>
+              <div className="relative py-3 flex flex-col gap-2">
+                <div className="flex items-center gap-4">
+                  <TestLabel text={comment.nickname} />
+                  <span className="text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</span>
+                </div>
+                <p className="whitespace-pre-wrap break-all">{comment.content}</p>
                 {comment.nickname === myNickname && (
-                  <div className="flex gap-2 mt-2">
+                  <div className="absolute flex gap-2 top-0 right-0">
                     <button
-                      className="px-2 py-1 text-sm text-white bg-yellow-500 rounded"
+                      className="px-2 py-1 text-xs text-gray-500 border-r hover:text-black"
                       onClick={() => handleEditComment(comment.commentId, comment.content)}
                     >
                       수정
                     </button>
                     <button
-                      className="px-2 py-1 text-sm text-white bg-red-500 rounded"
+                      className="pr-2 py-1 text-xs text-gray-500 hover:text-black"
                       onClick={() => onDeleteClick(comment.commentId)}
                     >
                       삭제
