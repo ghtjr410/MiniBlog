@@ -1,9 +1,8 @@
-package com.miniblog.back.config;
+package com.miniblog.back.auth.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.miniblog.back.filter.CustomAuthenticationFilter;
-import com.miniblog.back.service.TokenService;
-import com.miniblog.back.util.TokenProvider;
+import com.miniblog.back.auth.filter.CustomAuthenticationFilter;
+import com.miniblog.back.auth.filter.CustomTokenFilter;
+import com.miniblog.back.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,25 +17,26 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final TokenService tokenService;
-    private final String[] freeResourceUrls = {"/api/v1/members/register", "/api/v1/members/login"};
-    private final String[] userOnlyResourceUrls = {"/api/v1/members/logout"};
+    private final AuthService authService;
+    private final CustomTokenFilter customTokenFilter;
+    private final SecurityProperties securityProperties;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
         httpSecurity
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth -> { auth
-                    .requestMatchers(freeResourceUrls).permitAll()
-                    .requestMatchers(userOnlyResourceUrls).hasRole("user")
+                    .requestMatchers(securityProperties.getPermitAllUrlsAsArray()).permitAll()
+                    .requestMatchers(securityProperties.getUserOnlyUrlsAsArray()).hasRole("USER")
                     .anyRequest().authenticated();
                 })
+                .addFilterBefore(customTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(customAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 
     private CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) {
-        return new CustomAuthenticationFilter(tokenService, authenticationManager);
+        return new CustomAuthenticationFilter(authService, authenticationManager);
     }
 
     @Bean
