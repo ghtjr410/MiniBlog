@@ -1,7 +1,7 @@
-package com.miniblog.back.validator;
+package com.miniblog.back.member.validator;
 
-import com.miniblog.back.dto.member.RegisterRequest;
-import com.miniblog.back.repository.MemberRepository;
+import com.miniblog.back.member.dto.request.RegisterRequest;
+import com.miniblog.back.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

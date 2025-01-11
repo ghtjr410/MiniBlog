@@ -1,4 +1,4 @@
-package com.miniblog.back.dto.member;
+package com.miniblog.back.member.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

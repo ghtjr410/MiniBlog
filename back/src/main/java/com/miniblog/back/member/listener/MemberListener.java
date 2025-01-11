@@ -1,7 +1,7 @@
-package com.miniblog.back.listener;
+package com.miniblog.back.member.listener;
 
-import com.miniblog.back.model.Member;
-import com.miniblog.back.util.RoleType;
+import com.miniblog.back.auth.util.RoleType;
+import com.miniblog.back.member.model.Member;
 import jakarta.persistence.PrePersist;
 
 import java.time.LocalDateTime;

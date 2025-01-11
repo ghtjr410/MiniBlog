@@ -1,7 +1,7 @@
-package com.miniblog.back.mapper;
+package com.miniblog.back.member.mapper;
 
-import com.miniblog.back.dto.member.RegisterRequest;
-import com.miniblog.back.model.Member;
+import com.miniblog.back.member.dto.request.RegisterRequest;
+import com.miniblog.back.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

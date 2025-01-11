@@ -1,8 +1,8 @@
-package com.miniblog.back.controller;
+package com.miniblog.back.member.controller;
 
-import com.miniblog.back.dto.member.RegisterRequest;
-import com.miniblog.back.model.Member;
-import com.miniblog.back.service.MemberService;
+import com.miniblog.back.member.dto.request.RegisterRequest;
+import com.miniblog.back.member.model.Member;
+import com.miniblog.back.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

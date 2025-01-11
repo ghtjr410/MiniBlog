@@ -1,6 +1,6 @@
-package com.miniblog.back.security;
+package com.miniblog.back.auth.security;
 
-import com.miniblog.back.model.Member;
+import com.miniblog.back.member.model.Member;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

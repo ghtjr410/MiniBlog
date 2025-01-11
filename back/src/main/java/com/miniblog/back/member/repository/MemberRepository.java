@@ -1,6 +1,6 @@
-package com.miniblog.back.repository;
+package com.miniblog.back.member.repository;
 
-import com.miniblog.back.model.Member;
+import com.miniblog.back.member.model.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,12 +1,11 @@
-package com.miniblog.back.model;
+package com.miniblog.back.member.model;
 
-import com.miniblog.back.listener.MemberListener;
-import com.miniblog.back.util.RoleType;
+import com.miniblog.back.auth.util.RoleType;
+import com.miniblog.back.member.listener.MemberListener;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
