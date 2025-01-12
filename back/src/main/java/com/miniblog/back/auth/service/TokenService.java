@@ -2,25 +2,34 @@ package com.miniblog.back.auth.service;
 
 
 import com.miniblog.back.auth.dto.internal.AccessTokenClaimsDTO;
+import com.miniblog.back.auth.dto.request.RefreshRequestDTO;
+import com.miniblog.back.auth.dto.response.RefreshResponseDTO;
 import com.miniblog.back.auth.mapper.BlacklistTokenMapper;
 import com.miniblog.back.auth.model.BlacklistToken;
 import com.miniblog.back.auth.model.Token;
 import com.miniblog.back.auth.mapper.TokenMapper;
 import com.miniblog.back.auth.repository.BlacklistTokenRepository;
+import com.miniblog.back.auth.response.LoginResponseWriter;
 import com.miniblog.back.auth.util.TokenProvider;
 import com.miniblog.back.auth.repository.TokenRepository;
 import com.miniblog.back.auth.dto.internal.TokensDTO;
 import com.miniblog.back.auth.dto.internal.RefreshTokenInfoDTO;
 import com.miniblog.back.auth.util.TokenType;
+import com.miniblog.back.auth.util.TokenUtils;
 import com.miniblog.back.auth.util.TokenValidator;
 import com.miniblog.back.member.model.Member;
 import com.miniblog.back.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,38 +42,25 @@ public class TokenService {
     private final TokenRepository tokenRepository;
     private final MemberRepository memberRepository;
     private final BlacklistTokenRepository blacklistTokenRepository;
+    private final LoginResponseWriter loginResponseWriter;
 
-    public TokensDTO generateTokens(String username, Object claim, String deviceInfo) {
+    @Transactional
+    public TokensDTO generateTokens(Member member, List<String> roles, String deviceInfo) {
+        AccessTokenClaimsDTO tokenClaims = new AccessTokenClaimsDTO(roles, TokenType.ACCESS_TOKEN.getValue());
 
-        AccessTokenClaimsDTO tokenClaims = new AccessTokenClaimsDTO(claim, TokenType.ACCESS_TOKEN.getValue());
+        String accessToken = tokenProvider.createAccessToken(member.getUsername(), tokenClaims);
+        RefreshTokenInfoDTO refreshTokenResult = tokenProvider.createRefreshToken(member.getUsername());
 
-
-        // 토큰 생성
-        String accessToken = tokenProvider.createAccessToken(username, tokenClaims);
-        RefreshTokenInfoDTO refreshTokenResult = tokenProvider.createRefreshToken(username);
-
-        // 데이터베이스에 저장
-        saveToken(username, refreshTokenResult, deviceInfo);
+        Token token = tokenMapper.create(member, refreshTokenResult.refreshToken(), refreshTokenResult.expiresDate(), deviceInfo);
+        tokenRepository.save(token);
 
         return new TokensDTO(accessToken, refreshTokenResult.refreshToken());
     }
 
     @Transactional
-    private void saveToken(String username, RefreshTokenInfoDTO refreshTokenResult, String deviceInfo) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
-
-        Token token = tokenMapper.create(member, refreshTokenResult.refreshToken(), refreshTokenResult.expiresDate(), deviceInfo);
-        tokenRepository.save(token);
-    }
-
-
-    @Transactional
     public void revokeRefreshToken(String refreshToken) {
         // 1. Refresh Token 유효성 검증
-        if (!tokenValidator.validateToken(refreshToken)) {
-            throw new IllegalArgumentException("Invalid or expired Refresh Token.");
-        }
+        tokenValidator.validateToken(refreshToken);
 
         // 2. Refresh Token 데이터베이스에서 삭제
         Token token = tokenRepository.findByRefreshToken(refreshToken)
@@ -79,7 +75,44 @@ public class TokenService {
         log.info("Refresh Token {} has been revoked and added to blacklist.", refreshToken);
     }
 
-    public boolean isTokenBlacklisted(String token) {
-        return blacklistTokenRepository.existsByRefreshToken(token); // 블랙리스트에 있으면 true 반환
+    public void validateToken(String authorizationHeader) {
+        String token = TokenUtils.extractToken(authorizationHeader);
+        if (token.isBlank()) {
+            throw new SecurityException("Empty token");
+        }
+
+        tokenValidator.validateToken(token);
+
+        if (blacklistTokenRepository.existsByRefreshToken(token) == 1L) {
+            throw new SecurityException("Blacklisted token");
+        }
+    }
+
+    public Authentication getAuthenticationFromToken(String authorizationHeader) {
+        String token = TokenUtils.extractToken(authorizationHeader);
+
+        boolean isAccessToken = tokenValidator.isAccessToken(token);
+        String username = tokenValidator.getUsernameFromToken(token);
+
+        List<GrantedAuthority> authorities = isAccessToken
+                ? tokenValidator.getAuthoritiesFromToken(token)
+                : List.of();
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
+    }
+
+    @Transactional
+    public RefreshResponseDTO refresh(String authorizationHeader, RefreshRequestDTO requestDTO, HttpServletResponse httpServletResponse) {
+        String refreshToken = TokenUtils.extractToken(authorizationHeader);
+        String username = tokenValidator.getUsernameFromToken(refreshToken);
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
+        List<String> roles = List.of(member.getRole().toString());
+        TokensDTO tokensDTO = generateTokens(member, roles, requestDTO.deviceInfo());
+        loginResponseWriter.addCookie(httpServletResponse, tokensDTO.refreshToken());
+
+        revokeRefreshToken(refreshToken);
+
+        return new RefreshResponseDTO(tokensDTO.accessToken());
     }
 }
