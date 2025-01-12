@@ -26,10 +26,15 @@ public class LoginResponseWriter {
         httpServletResponse.addCookie(refreshTokenCookie);
     }
 
-    public void writeJsonResponse(HttpServletResponse httpServletResponse, String accessToken) throws IOException {
+    public void writeLoginSuccessResponse(HttpServletResponse httpServletResponse, String accessToken) throws IOException {
         LoginResponseDTO loginResponse = new LoginResponseDTO(accessToken);
         httpServletResponse.setContentType("application/json");
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
         httpServletResponse.getWriter().write(objectMapper.writeValueAsString(loginResponse));
+    }
+
+    public void writeLoginFailedResponse(HttpServletResponse httpServletResponse) throws IOException {
+                httpServletResponse.setContentType("application/json");
+        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }
