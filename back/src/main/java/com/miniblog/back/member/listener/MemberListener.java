@@ -11,7 +11,7 @@ public class MemberListener {
     @PrePersist
     public void prePersist(Member member) {
         if (member.getRole() == null) {
-            member.setRole(RoleType.USER);
+            member.setRole(RoleType.ROLE_USER);
         }
         if (member.getCreatedDate() == null) {
             member.setCreatedDate(LocalDateTime.now());

@@ -39,7 +39,6 @@ public class Member {
     @Column(name = "role", nullable = false)
     private RoleType role;
 
-    @CreationTimestamp
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 }
