@@ -20,15 +20,15 @@ public class Token {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Column(name = "refresh_token", unique = true, nullable = false)
     private String refreshToken;
 
-    @Column(name = "expires_date", nullable = false)
-    private LocalDateTime expiresDate;
-
     @Column(name = "device_info", nullable = false)
     private String deviceInfo;
+
+    @Column(name = "expires_date", nullable = false)
+    private LocalDateTime expiresDate;
 }

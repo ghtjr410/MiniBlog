@@ -4,10 +4,8 @@ import com.miniblog.back.auth.util.RoleType;
 import com.miniblog.back.member.listener.MemberListener;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-
 
 @Getter
 @Setter
@@ -36,7 +34,7 @@ public class Member {
     private String nickname;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Column(name = "role", nullable = false, length = 20)
     private RoleType role;
 
     @Column(name = "created_date", nullable = false, updatable = false)
