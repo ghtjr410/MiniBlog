@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -20,11 +21,13 @@ public class SecurityConfig {
     private final AuthService authService;
     private final CustomTokenFilter customTokenFilter;
     private final SecurityProperties securityProperties;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
         httpSecurity
-                .csrf(csrf->csrf.disable())
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(auth -> { auth
                     .requestMatchers(securityProperties.getPermitAllUrlsAsArray()).permitAll()
                     .requestMatchers(securityProperties.getUserOnlyUrlsAsArray()).hasRole("USER")
