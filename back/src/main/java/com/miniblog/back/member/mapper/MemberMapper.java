@@ -1,6 +1,6 @@
 package com.miniblog.back.member.mapper;
 
-import com.miniblog.back.member.dto.request.RegisterRequest;
+import com.miniblog.back.member.dto.request.RegisterRequestDTO;
 import com.miniblog.back.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,7 +12,7 @@ public class MemberMapper {
 
     private final PasswordEncoder passwordEncoder;
 
-    public Member create(RegisterRequest request) {
+    public Member create(RegisterRequestDTO request) {
         return Member.builder()
                 .username(request.username())
                 .password(passwordEncoder.encode(request.password()))
