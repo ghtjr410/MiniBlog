@@ -1,7 +1,6 @@
 package com.miniblog.back.auth.filter;
 
 import com.miniblog.back.auth.config.SecurityProperties;
-import com.miniblog.back.auth.service.AuthService;
 import com.miniblog.back.auth.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

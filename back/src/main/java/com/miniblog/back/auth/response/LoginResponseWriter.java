@@ -2,7 +2,7 @@ package com.miniblog.back.auth.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.miniblog.back.auth.config.JwtProperties;
-import com.miniblog.back.auth.dto.response.LoginResponseDTO;
+import com.miniblog.back.auth.dto.response.AccessTokenResponseDTO;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +27,13 @@ public class LoginResponseWriter {
     }
 
     public void writeLoginSuccessResponse(HttpServletResponse httpServletResponse, String accessToken) throws IOException {
-        LoginResponseDTO loginResponse = new LoginResponseDTO(accessToken);
         httpServletResponse.setContentType("application/json");
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-        httpServletResponse.getWriter().write(objectMapper.writeValueAsString(loginResponse));
+        httpServletResponse.getWriter().write(objectMapper.writeValueAsString(AccessTokenResponseDTO.of(accessToken)));
     }
 
     public void writeLoginFailedResponse(HttpServletResponse httpServletResponse) throws IOException {
-                httpServletResponse.setContentType("application/json");
+        httpServletResponse.setContentType("application/json");
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }
