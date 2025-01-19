@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.miniblog.back.auth.dto.internal.TokensDTO;
 import com.miniblog.back.auth.dto.request.LoginRequestDTO;
 import com.miniblog.back.auth.util.TokenUtils;
-import com.miniblog.back.auth.util.TokenValidator;
+import com.miniblog.back.common.exception.NotFoundException;
 import com.miniblog.back.member.model.Member;
 import com.miniblog.back.member.repository.MemberRepository;
 import com.miniblog.back.auth.response.LoginResponseWriter;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -52,16 +51,12 @@ public class AuthService {
         String username = authResult.getName();
         String deviceInfo = (String) httpServletRequest.getAttribute("deviceInfo");
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
-
+                .orElseThrow(() -> new NotFoundException("유저를 찾지 못했습니다."));
         List<String> roles = TokenUtils.extractRolesFromAuthorities(authResult.getAuthorities());
-        // Token 생성
+
         TokensDTO tokens = tokenService.generateTokens(member, roles, deviceInfo);
-        log.info(tokens.toString());
-        // Refresh Token 쿠키 저장
         loginResponseWriter.addCookie(httpServletResponse, tokens.refreshToken());
 
-        // JSON 응답 작성
         loginResponseWriter.writeLoginSuccessResponse(httpServletResponse, tokens.accessToken());
     }
 
@@ -73,6 +68,5 @@ public class AuthService {
         String refreshToken = TokenUtils.extractToken(authorizationHeader);
 
         tokenService.revokeRefreshToken(refreshToken);
-        log.info("Refresh Token {} has been revoked.", refreshToken);
     }
 }
