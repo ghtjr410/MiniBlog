@@ -1,5 +1,6 @@
 package com.miniblog.back.member.model;
 
+import com.miniblog.back.member.listener.EmailVerificationListener;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,9 +12,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@EntityListeners(EmailVerificationListener.class)
 @Table(
         name = "email_verification",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "email"})}
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "email"})},
+        indexes = {
+                @Index(name = "idx_username_email", columnList = "username, email"),
+                @Index(name = "idx_username_email_code", columnList = "username, email, code")
+        }
 )
 public class EmailVerification {
     @Id
@@ -28,9 +34,6 @@ public class EmailVerification {
 
     @Column(name = "code", nullable = false, length = 4)
     private String code;
-
-    @Column(name = "created_date", nullable = false, updatable = false)
-    private LocalDateTime createdDate;
 
     @Column(name = "expires_date", nullable = false)
     private LocalDateTime expiresDate;

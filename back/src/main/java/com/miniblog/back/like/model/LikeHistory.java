@@ -15,7 +15,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @EntityListeners(LikeHistoryListener.class)
-@Table(name = "like_history")
+@Table(
+        name = "like_history",
+        indexes = {
+                @Index(name = "idx_member_id", columnList = "member_id"),
+                @Index(name = "idx_post_id", columnList = "post_id"),
+                @Index(name = "idx_created_date", columnList = "created_date"),
+        }
+)
 public class LikeHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,7 +1,6 @@
-package com.miniblog.back.viewcount.model;
+package com.miniblog.back.post.model;
 
-import com.miniblog.back.post.model.Post;
-import com.miniblog.back.viewcount.listener.ViewCountListener;
+import com.miniblog.back.post.listener.PostAggregateListener;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,14 +10,14 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@EntityListeners(ViewCountListener.class)
+@EntityListeners(PostAggregateListener.class)
 @Table(
-        name = "view_count",
+        name = "post_aggregate",
         indexes = {
                 @Index(name = "idx_post_id", columnList = "post_id")
         }
 )
-public class ViewCount {
+public class PostAggregate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +26,9 @@ public class ViewCount {
     @JoinColumn(name = "post_id", nullable = false, unique = true)
     private Post post;
 
-    @Column(name = "count")
-    private Long count;
+    @Column(name = "comment_count", nullable = false)
+    private Long comment_count;
+
+    @Column(name = "like_count", nullable = false)
+    private Long like_count;
 }
