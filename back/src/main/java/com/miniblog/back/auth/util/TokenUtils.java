@@ -22,5 +22,4 @@ public class TokenUtils {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
     }
-
 }
