@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 import static com.miniblog.api.post.domain.PostErrorMessage.POST_NOT_OWNER;
 
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Entity
 @Table(

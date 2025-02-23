@@ -19,10 +19,17 @@ import static com.miniblog.api.auth.domain.AuthErrorMessage.AUTH_TOKEN_EXPIRED;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Entity
-@Table(name = "refresh_token")
+@Table(
+        name = "refresh_token",
+        indexes = {
+                @Index(name = "idx_token", columnList = "token"),
+                @Index(name = "idx_member_id", columnList = "member_id"),
+                @Index(name = "idx_expires_date", columnList = "expires_date")
+        }
+)
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PRIVATE)
 public class RefreshToken {

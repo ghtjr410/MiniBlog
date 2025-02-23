@@ -13,7 +13,13 @@ import static com.miniblog.api.member.domain.MemberErrorMessage.*;
 @Builder(toBuilder = true)
 @Getter
 @Entity
-@Table(name = "email_code")
+@Table(
+        name = "email_code",
+        indexes = {
+                @Index(name = "idx_email_type", columnList = "email, type"),
+                @Index(name = "idx_expires_date", columnList = "expires_date")
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class EmailCode {

@@ -5,7 +5,13 @@ import lombok.*;
 
 @Builder(toBuilder = true)
 @Getter
-@Table(name = "post_counts")
+@Table(
+        name = "post_counts",
+        indexes = {
+                @Index(name = "idx_post_counts_post_id", columnList = "post_id"),
+                @Index(name = "idx_like_count", columnList = "like_count")
+        }
+)
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

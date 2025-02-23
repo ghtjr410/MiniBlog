@@ -9,7 +9,15 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 @Getter
 @Entity
-@Table(name = "members")
+@Table(
+        name = "members",
+        indexes = {
+                @Index(name = "idx_username", columnList = "username"),
+                @Index(name = "idx_email", columnList = "email"),
+                @Index(name = "idx_nickname", columnList = "nickname"),
+                @Index(name = "idx_created_date", columnList = "created_date")
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member {

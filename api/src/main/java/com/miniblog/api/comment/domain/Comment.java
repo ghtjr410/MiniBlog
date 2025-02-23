@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 import static com.miniblog.api.comment.domain.CommentErrorMessage.COMMENT_NOT_OWNER;
 
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Entity
 @Table(
