@@ -1,17 +1,16 @@
 package com.miniblog.api.comment.api;
 
-import com.miniblog.api.comment.api.dto.request.CommentWriteRequest;
 import com.miniblog.api.comment.api.dto.request.CommentEditRequest;
-import com.miniblog.api.comment.application.business.CommentEditService;
-import com.miniblog.api.comment.application.support.CommentReader;
+import com.miniblog.api.comment.api.dto.request.CommentWriteRequest;
 import com.miniblog.api.comment.application.business.CommentDeleteService;
+import com.miniblog.api.comment.application.business.CommentEditService;
 import com.miniblog.api.comment.application.business.CommentWriteService;
-import com.miniblog.api.comment.application.dto.CommentWriteData;
 import com.miniblog.api.comment.application.dto.CommentEditData;
+import com.miniblog.api.comment.application.dto.CommentWriteData;
+import com.miniblog.api.comment.application.support.CommentReader;
 import com.miniblog.api.comment.domain.Comment;
 import com.miniblog.api.common.api.ApiResponse;
 import com.miniblog.api.common.api.MemberId;
-import com.miniblog.api.query.application.CommentDetailQueryService;
 import com.miniblog.api.query.dto.query.CommentDetailDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,6 @@ public class CommentController {
     private final CommentEditService commentEditService;
     private final CommentDeleteService commentDeleteService;
     private final CommentReader commentReader;
-    private final CommentDetailQueryService commentDetailQueryService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<?>> writeComment(
