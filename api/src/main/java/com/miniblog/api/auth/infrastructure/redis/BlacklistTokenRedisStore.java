@@ -6,11 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.StringRedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -51,12 +49,6 @@ public class BlacklistTokenRedisStore {
     }
 
     public boolean existsByToken(String token) {
-        String script = "return redis.call('EXISTS', KEYS[1])";
-        DefaultRedisScript<Boolean> redisScript = new DefaultRedisScript<>(script, Boolean.class);
-        return Boolean.TRUE.equals(redisTemplate.execute(redisScript, Collections.singletonList(token)));
+        return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
-
-
-
-
 }
